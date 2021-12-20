@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ChatApp</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="key">Secret_Key</string>
+    <string name="Salt_value">SALTVALUE</string>
+</resources>
