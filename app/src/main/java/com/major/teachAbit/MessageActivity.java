@@ -114,15 +114,13 @@ public class MessageActivity extends AppCompatActivity {
         userid = intent.getStringExtra("userid");
         fuser = FirebaseAuth.getInstance().getCurrentUser();
 
-        Encryption en = new Encryption(this.getString(R.string.key),this.getString(R.string.Salt_value));
-
         btn_send.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
                 notify = true;
                 String msg = text_send.getText().toString();
-                msg = en.encrypt(msg);
+//                msg = en.encryptMessage(msg.toCharArray());
                 String time = String.valueOf(System.currentTimeMillis());
                 if (!msg.equals("")){
                     sendMessage(fuser.getUid(), userid, msg, time);
@@ -136,6 +134,7 @@ public class MessageActivity extends AppCompatActivity {
 
         reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
 
+        Encryption en = new Encryption(this.getString(R.string.key),this.getString(R.string.Salt_value));
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -182,10 +181,12 @@ public class MessageActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void sendMessage(String sender, final String receiver, String message, String time){
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
+        Encryption en = new Encryption(this.getString(R.string.key),this.getString(R.string.Salt_value));
         // All attributes of chat class given here.
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", sender);
@@ -196,6 +197,7 @@ public class MessageActivity extends AppCompatActivity {
 
         reference.child("Chats").push().setValue(hashMap);
 
+//        Toast.makeText(this , message, Toast.LENGTH_SHORT).show();
 
         // add user to chat fragment
         final DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("Chatlist")
@@ -220,7 +222,9 @@ public class MessageActivity extends AppCompatActivity {
                 .child(userid)
                 .child(fuser.getUid());
         chatRefReceiver.child("id").setValue(fuser.getUid());
-
+        // idher pr dhyan dena hai
+        //
+        //
         final String msg = message;
 
         reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
@@ -251,11 +255,10 @@ public class MessageActivity extends AppCompatActivity {
                     Token token = snapshot.getValue(Token.class);
                     Data data = new Data(fuser.getUid(), R.drawable.profile_img, username+": "+message, "New Message",
                             userid);
-
                     Sender sender = new Sender(data, token.getToken());
-
                     apiService.sendNotification(sender)
                             .enqueue(new Callback<MyResponse>() {
+
                                 @Override
                                 public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
                                     if (response.code() == 200){
@@ -297,8 +300,8 @@ public class MessageActivity extends AppCompatActivity {
                     Chat chat = snapshot.getValue(Chat.class);
                     if (chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
                             chat.getReceiver().equals(userid) && chat.getSender().equals(myid)){
-                        String msg_to_decode = en.decrypt(chat.getMessage());
-                        chat.setMessage(msg_to_decode);
+//                        String msg_to_decode = en.decrypt(chat.getMessage());
+//                        chat.setMessage(msg_to_decode);
                         mchat.add(chat);
                     }
 

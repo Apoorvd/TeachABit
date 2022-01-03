@@ -25,6 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     Button btn_login;
     Typeface MR,MRR;
     ProgressDialog dialog;
+    public static String this_email = "";
 
     FirebaseAuth auth;
     TextView forgot_password, login_tv, msg_tv;
@@ -69,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String txt_email = email.getText().toString();
+                this_email = txt_email;
                 String txt_password = password.getText().toString();
 
                 Utils.hideKeyboard(LoginActivity.this);

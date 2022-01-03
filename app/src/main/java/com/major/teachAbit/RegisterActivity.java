@@ -18,11 +18,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.major.teachAbit.Adapter.Teachers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -33,6 +38,9 @@ public class RegisterActivity extends AppCompatActivity {
     FirebaseAuth auth;
     DatabaseReference reference;
     ProgressDialog dialog;
+
+
+    static boolean flag=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,14 +76,20 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String txt_username = username.getText().toString();
                 String txt_email = email.getText().toString();
+                LoginActivity.this_email = txt_email;
+                if(txt_email.startsWith("5000"))
+                {
+                    txt_username = "Stu. " + txt_username;
+                }
+                String dummy_email[] = txt_email.split("@");
                 String txt_password = password.getText().toString();
                 Utils.hideKeyboard(RegisterActivity.this);
-
                 if (TextUtils.isEmpty(txt_username) || TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_password)){
                     Toast.makeText(RegisterActivity.this, "All fileds are required", Toast.LENGTH_SHORT).show();
-                } else if (txt_password.length() < 6 ){
-                    Toast.makeText(RegisterActivity.this, "password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+                } else if (txt_password.length() < 6 || !(txt_email.startsWith("5000") && dummy_email[1].equals("stu.upes.ac.in") || dummy_email[1].equals("ddn.upes.ac.in") )){
+                    Toast.makeText(RegisterActivity.this, "Enter a valid Email or password is too short", Toast.LENGTH_SHORT).show();
                 } else {
+
                     register(txt_username, txt_email, txt_password);
                 }
             }
@@ -113,6 +127,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()){
                                         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                                        LoginActivity.this_email = email;
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(intent);
                                         finish();

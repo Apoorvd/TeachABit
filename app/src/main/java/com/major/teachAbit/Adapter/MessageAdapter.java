@@ -62,7 +62,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         Chat chat = mChat.get(position);
         holder.show_message.setTypeface(MRR);
         holder.txt_seen.setTypeface(MRR);
-        Encryption en = new Encryption()
+//        Encryption en = new Encryption()
         holder.show_message.setText(chat.getMessage());
         if(chat.getTime()!=null && !chat.getTime().trim().equals("")) {
             holder.time_tv.setText(holder.convertTime(chat.getTime()));
@@ -116,7 +116,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @Override
     public int getItemViewType(int position) {
         fuser = FirebaseAuth.getInstance().getCurrentUser();
-        if (mChat.get(position).getSender().equals(fuser.getUid())){
+        if (mChat.get(position).getSender().equals(fuser.getUid()) ){
             return MSG_TYPE_RIGHT;
         } else {
             return MSG_TYPE_LEFT;

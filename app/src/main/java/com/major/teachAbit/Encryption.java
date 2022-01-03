@@ -26,8 +26,10 @@ public class Encryption
     /* Private variable declaration */
     private String SECRET_KEY ;
     private String SALTVALUE ;
+    private static int a = 03;
+    private static int b = 24;
 
-    Encryption(String Secret_key, String SALTVALUE)
+    public Encryption(String Secret_key, String SALTVALUE)
     {
         this.SECRET_KEY = Secret_key;
         this.SALTVALUE = SALTVALUE;
@@ -87,19 +89,78 @@ public class Encryption
         }
         return null;
     }
-    /* Driver Code */
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public static void main(String[] args)
+    public String encryptMessage(char[] msg)
     {
-        /* Message to be encrypted. */
-//        String originalval = "AES Encryption";
-//        /* Call the encrypt() method and store result of encryption. */
-//        String encryptedval = encrypt(originalval);
-//        /* Call the decrypt() method and store result of decryption. */
-//        String decryptedval = decrypt(encryptedval);
-//        /* Display the original message, encrypted message and decrypted message on the console. */
-//        System.out.println("Original value: " + originalval);
-//        System.out.println("Encrypted value: " + encryptedval);
-//        System.out.println("Decrypted value: " + decryptedval);
+        /// Cipher Text initially empty
+        String cipher = "";
+        for (int i = 0; i < msg.length; i++)
+        {
+            // Avoid space to be encrypted
+            /* applying encryption formula ( a x + b ) mod m
+            {here x is msg[i] and m is 26} and added 'A' to
+            bring it in range of ascii alphabet[ 65-90 | A-Z ] */
+            if (msg[i] != ' ')
+            {
+                cipher = cipher
+                        + (char) ((((a * (msg[i] - 'A')) + b) % 26) + 'A');
+            } else // else simply append space character
+            {
+                cipher += msg[i];
+            }
+        }
+        return cipher;
     }
+
+    public String decryptCipher(String cipher)
+    {
+        String msg = "";
+        int a_inv = 0;
+        int flag = 0;
+
+        //Find a^-1 (the multiplicative inverse of a
+        //in the group of integers modulo m.)
+        for (int i = 0; i < 26; i++)
+        {
+            flag = (a * i) % 26;
+
+            // Check if (a*i)%26 == 1,
+            // then i will be the multiplicative inverse of a
+            if (flag == 1)
+            {
+                a_inv = i;
+            }
+        }
+        for (int i = 0; i < cipher.length(); i++)
+        {
+            /*Applying decryption formula a^-1 ( x - b ) mod m
+            {here x is cipher[i] and m is 26} and added 'A'
+            to bring it in range of ASCII alphabet[ 65-90 | A-Z ] */
+            if (cipher.charAt(i) != ' ')
+            {
+                msg = msg + (char) (((a_inv *
+                        ((cipher.charAt(i) + 'A' - b)) % 26)) + 'A');
+            }
+            else //else simply append space character
+            {
+                msg += cipher.charAt(i);
+            }
+        }
+
+        return msg;
+    }
+
+    /* Driver Code */
+//    public static void main(String[] args)
+//    {
+//        /* Message to be encrypted. */
+////        String originalval = "AES Encryption";
+////        /* Call the encrypt() method and store result of encryption. */
+////        String encryptedval = encrypt(originalval);
+////        /* Call the decrypt() method and store result of decryption. */
+////        String decryptedval = decrypt(encryptedval);
+////        /* Display the original message, encrypted message and decrypted message on the console. */
+////        System.out.println("Original value: " + originalval);
+////        System.out.println("Encrypted value: " + encryptedval);
+////        System.out.println("Decrypted value: " + decryptedval);
+//    }
 }  

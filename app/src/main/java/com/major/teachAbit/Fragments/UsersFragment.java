@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,6 +27,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.major.teachAbit.Adapter.OnItemClick;
 import com.major.teachAbit.Adapter.UserAdapter;
+import com.major.teachAbit.LoginActivity;
 import com.major.teachAbit.Model.User;
 import com.major.teachAbit.R;
 
@@ -121,7 +123,11 @@ public class UsersFragment extends Fragment {
                     assert user != null;
                     assert fuser != null;
                     if (!user.getId().equals(fuser.getUid())){
-                        mUsers.add(user);
+                        if(user.getUsername().startsWith("Stu") && LoginActivity.this_email.startsWith("5000")) {
+
+                        }
+                        else{
+                        mUsers.add(user);}
                     }
                 }
 
@@ -151,8 +157,11 @@ public class UsersFragment extends Fragment {
                         User user = snapshot.getValue(User.class);
 
                         if (user!= null && user.getId()!=null && firebaseUser!=null && !user.getId().equals(firebaseUser.getUid())) {
-                            mUsers.add(user);
-                        }
+                            if(!(user.getUsername().startsWith("Stu.") && LoginActivity.this_email.startsWith("5000"))) {
+                                    mUsers.add(user);
+                            }
+                            }
+
                     }
 
                     if(mUsers.size()==0){

@@ -3,7 +3,9 @@ package com.major.teachAbit.Adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.major.teachAbit.Encryption;
+import com.major.teachAbit.LoginActivity;
 import com.major.teachAbit.MessageActivity;
 import com.major.teachAbit.Model.Chat;
 import com.major.teachAbit.Model.User;
@@ -63,6 +67,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         holder.username.setTypeface(MR);
         holder.last_msg.setTypeface(MRR);
 
+
+        if(user.getUsername().startsWith("Stu") && LoginActivity.this_email.startsWith("5000")) {
+
+        }
+        else{
         holder.username.setText(user.getUsername());
         if (user.getImageURL().equals("default")){
             holder.profile_image.setImageResource(R.drawable.profile_img);
@@ -71,7 +80,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         }
 
         if (ischat){
-            lastMessage(user.getId(), holder.last_msg);
+
+            lastMessage(user.getId(), holder.last_msg, new Encryption(this.mContext.getString(R.string.key), this.mContext.getString(R.string.Salt_value)));
         } else {
             holder.last_msg.setVisibility(View.GONE);
         }
@@ -104,7 +114,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             public void onClick(View view) {
                onItemClick.onItemCLick(user.getId(),view);
             }
-        });
+        });}
     }
 
     @Override
@@ -132,12 +142,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     }
 
     //check for last message
-    private void lastMessage(final String userid, final TextView last_msg){
+    private void lastMessage(final String userid, final TextView last_msg, Encryption en){
         theLastMessage = "default";
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
 
         reference.addValueEventListener(new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
